@@ -21,3 +21,6 @@
 *.i*86
 *.x86_64
 *.hex
+
+# clone of the course website
+cs.kennesaw.edu/
