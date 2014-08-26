@@ -1,0 +1,21 @@
+/* cs4491-HPC Fall 2014 
+ * Michael Hug
+ * Assignment 1
+ * Problem 1.3 on pg 12-13
+ */
+Try to write pseudo-code for the tree-structured global sum illustrated in
+Figure 1.1. Assume the number of cores is a power of two (1, 2, 4, 8, . . . ).
+
+
+the trivial act of giving out data to each core is assumed completed
+Activecores=number of cores allocated by OS/programmer
+i=0;
+
+while (ActiveCores>1)
+	if my_corenumber % 2^(i+1) equals 0
+		enter wait for message (daemon) mode
+	else 
+		send message to my_corenumber-2^(i)
+		Activecores--
+	i++
+return number from core 0

@@ -1,0 +1,24 @@
+/* cs4491-HPC Fall 2014 
+ * Michael Hug
+ * Assignment 1
+ * Problem 1.6 on pg 13-14
+ */
+
+Derive formulas for the number of receives and additions that core 0 carries out
+using
+a. the original pseudo-code for a global sum, and
+b. the tree-structured global sum.
+c. Make a table showing the numbers of receives and additions carried out by core 0 when the two sums are used with 2, 4, 8, . . . , 1024 cores.
+
+	p is the number of cores
+
+a) core 0 receives = p-1 : core 0 additions = p
+b) core 0 receives = log2(p) : core 0 additions = log2(p)+1
+c)
+				+-------------------------------------------------+
+Number of cores			|0002|0004|0008|0016|0032|0064|0128|0256|0512|1024|
+original code receives		|0001|0003|0007|0015|0031|0063|0127|0255|0511|1023|
+original code additions		|0002|0004|0008|0016|0032|0064|0128|0256|0512|1024|
+tree stuructured receives	|0001|0002|0003|0004|0005|0006|0007|0008|0009|0010|
+tree stuructured additions	|0002|0003|0004|0005|0006|0007|0008|0009|0010|0011|
+				+-------------------------------------------------+
