@@ -7,34 +7,61 @@
 #include <stdio.h>
 #include <math.h>
 
-void printHorizontalSeparator(int max)
+#define nMin 10
+#define nMax 320
+#define pMin 1
+#define pMax 128
+
+void printHorizontalSeparator(int min, int max)
 {
 	int i;
 	printf("\t\t+");
-	for(i=0;i<max;i++)
+	for(i=min;i<max;i*=2)
 	{
 		printf("----------");
 	}
 	printf("---+\n");	
 }
 
-double Tserial(int n, int problem_size_multiplier)
+double Tserial(int n)
 {
-	return pow(pow(2,n)*problem_size_multiplier,2);
+	return pow(n,2);
 }
 
-double Tparallela(int n, int problem_size_multiplier, int p)
+double Tparallela(int n, int p)
 {
-	return Tserial(n,problem_size_multiplier)/pow(2,p) + log(pow(2,p))/log(2);
+	return Tserial(n)/p + log(p)/log(2);
 }
 
-double Tparallelb(int n, int problem_size_multiplier, int p, int Toverhead)
+double Tparallelb(int n, int p, int Toverhead)
 {
-	return Tserial(n,problem_size_multiplier)/pow(2,p) + Toverhead;
+	return Tserial(n)/p + Toverhead;
+}
+
+double speedupA(int n, int p)
+{
+	return Tserial(n)/Tparallela(n,p);
+}
+
+double efficiencyA(int n, int p)
+{
+	return Tserial(n)/(p*Tparallela(n,p));
+}
+
+double efficiencyB(int n, int p, int Toverhead)
+{
+	return Tserial(n)/(p*Tparallelb(n,p,Toverhead));
 }
 
 int main()
 {
+
+	//n is the problem size
+	int n;
+
+	//p is the number of processes
+	int p;
+	
 	printf("Suppose the run-time of a serial program is given by Tserial = n^2 , where\n"); 
 	printf("the units of the run-time are in microseconds. Suppose that a paral-\n");
 	printf("lelization of this program has run-time Tparallel = n^2 /p + log 2 (p). Write a\n");
@@ -44,126 +71,46 @@ int main()
 	printf("is increased and n is held fixed? What happens when p is fixed and n is\nincreased?\n\n");
 
 	printf("A) Considering the given range for n and p:\n");
-	printf("A person could lose efficiency by using many more processes than the attempted problem size. We called this the law of diminishing returns and it kicked in\n");
-	printf("very clearly at the bottom left hand corner of the efficiency and speedup charts.\n\n");
-
-	printf("If one would fix the process count and increase the problem size, the graphs always show an increase in speedup and efficiency.\n\n");
-
-	//n is the problem size
-	int n;
-	int max_n_power = 5;
-	int problem_size_multiplier = 10;
-
-	//p is the number of processes
-	int p;
-	int max_p_power = 7;
-
-	//used in part b
-	double Toverhead;
+	printf("As p grows and n is fixed, we see a better efficiency and speedup in all cases except n=10.\n");
+	printf("As n grows and p is fixed, we always see a better efficiency and speedup.\n");
+	printf("A developer could reach diminishing returns is he trys to use many more processes than the problem size.\n");
+	printf("the speedup actually started to decrease at n=10,p=128. The efficiency nose dived with the small problem size/large process size.\n");
+	printf("The efficiency and speedup stayed quite nice for large problem sizes/large process sizes.\n");
+	printf("This test showed that that it is not possible to just keep throwing processes at bad code, elegance is a requirement for efficiency.\n\n");
 
 	//Information
 	printf("Rows indicate the number of processes (p)\nColumns indicate the problem size(n)\n\n\n");
-
-	/*
-	//Table Label
-	printf("\t\tTime of serial programmed application execution\n");
-	
-	//hat on the table
-	printHorizontalSeparator(max_n_power);
-	
-	//column headings
-	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
-	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
-	}
-	printf("|\n");
-
-	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
-
-	//data
-	for(p=0;p<=max_p_power;p++)
-	{
-		printf("\t%8.f",pow(2,p));
-		for(n=0;n<=max_n_power;n++)
-		{
-			printf("|%8.1f",Tserial(n,problem_size_multiplier));
-		}
-		printf("|\n");
-	}
-
-	//base on the table
-	printHorizontalSeparator(max_n_power);
-
-	//spaces between tables
-	printf("\n\n");
-
-	//Table Label
-	printf("\t\tTime of parallel programmed application execution\n");
-	
-	//hat on the table
-	printHorizontalSeparator(max_n_power);
-	
-	//column headings
-	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
-	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
-	}
-	printf("|\n");
-
-	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
-
-	//data
-	for(p=0;p<=max_p_power;p++)
-	{
-		printf("\t%8.f",pow(2,p));
-		for(n=0;n<=max_n_power;n++)
-		{
-			printf("|%8.1f",Tparallela(n,problem_size_multiplier,p));
-		}
-		printf("|\n");
-	}
-
-	//base on the table
-	printHorizontalSeparator(max_n_power);
-
-	//spaces between tables
-	printf("\n\n");
-	*/
 
 	//Table Label
 	printf("\t\tSpeedup\n");
 	
 	//hat on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 	
 	//column headings
 	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
+	for(n=nMin;n<=nMax;n*=2)
 	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
+		printf("|%8.d",n);
 	}
 	printf("|\n");
 
 	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//data
-	for(p=0;p<=max_p_power;p++)
+	for(p=pMin;p<=pMax;p*=2)
 	{
-		printf("\t%8.f",pow(2,p));
-		for(n=0;n<=max_n_power;n++)
+		printf("\t%8.d",p);
+		for(n=nMin;n<=nMax;n*=2)
 		{
-			printf("|%8.4f",Tserial(n,problem_size_multiplier)/Tparallela(n,problem_size_multiplier,p));
+			printf("|%8.4f",speedupA(n,p));
 		}
 		printf("|\n");
 	}
 
 	//base on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//spaces between tables
 	printf("\n\n");
@@ -172,32 +119,32 @@ int main()
 	printf("\t\tEfficiency\n");
 	
 	//hat on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 	
 	//column headings
 	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
+	for(n=nMin;n<=nMax;n*=2)
 	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
+		printf("|%8.d",n);
 	}
 	printf("|\n");
 
 	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//data
-	for(p=0;p<=max_p_power;p++)
+	for(p=pMin;p<=pMax;p*=2)
 	{
-		printf("\t%8.f",pow(2,p));
-		for(n=0;n<=max_n_power;n++)
+		printf("\t%8.d",p);
+		for(n=nMin;n<=nMax;n*=2)
 		{
-			printf("|%8.4f",Tserial(n,problem_size_multiplier)/(pow(2,p)+Tparallela(n,problem_size_multiplier,p)));
+			printf("|%8.4f", efficiencyA(n,p));
 		}
 		printf("|\n");
 	}
 
 	//base on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//spaces between tables
 	printf("\n\n");
@@ -206,79 +153,73 @@ int main()
 	printf("\t- Show that if T overhead grows more slowly than Tserial , the parallel\n\t\tefficiency will increase as we increase the problem size.\n");
 	printf("\t- Show that if, on the other hand, Toverhead grows faster than Tserial , the\n\t\tparallel efficiency will decrease as we increase the problem size.\n\n");
 
-	//Information
-	printf("Number of processes (p) will be fixed at 128\nColumns indicate the problem size(n)\nRows indicate the time to swich processes (Toverhead)\n\n");
-	p = 128;
-
 	//Table Label
-	printf("\t\tEfficiency as Toverhead increases linearly\n");
+	printf("\t\tEfficiency when Toverhead=n\n");
 	
 	//hat on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 	
 	//column headings
 	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
+	for(n=nMin;n<=nMax;n*=2)
 	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
+		printf("|%8.d",n);
 	}
 	printf("|\n");
 
 	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//data
-	Toverhead=1.0;
-	int i;
-	for(i=1;i<=8;i++)
+	for(p=pMin;p<=pMax;p*=2)
 	{
-		printf("\t%8.f",Toverhead);
-		for(n=0;n<=max_n_power;n++)
+		printf("\t%8.d",p);
+		for(n=nMin;n<=nMax;n*=2)
 		{
-			printf("|%8.4f",Tserial(n,problem_size_multiplier)/(p*Tparallelb(n,problem_size_multiplier,p,Toverhead)));
+			printf("|%8.6f",efficiencyB(n,p,n));
 		}
 		printf("|\n");
-		Toverhead++;
 	}
 
 	//base on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//spaces between tables
 	printf("\n\n");
 
 	//Table Label
-	printf("\t\tEfficiency as Toverhead increases cubically\n");
+	printf("\t\tEfficiency when Toverhead=n^3\n");
 	
 	//hat on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 	
 	//column headings
 	printf("\t\t");
-	for(n=0;n<=max_n_power;n++)
+	for(n=nMin;n<=nMax;n*=2)
 	{
-		printf("|%8.f",pow(2,n) * problem_size_multiplier);
+		printf("|%8.d",n);
 	}
 	printf("|\n");
 
 	//separator between headings and data
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
 
 	//data
-	Toverhead=2.0;
-	for(i=1;i<=3;i++)
+	for(p=pMin;p<=pMax;p*=2)
 	{
-		printf("\t%8.f",Toverhead);
-		for(n=0;n<=max_n_power;n++)
+		printf("\t%8.d",p);
+		for(n=nMin;n<=nMax;n*=2)
 		{
-			printf("|%8.4f",Tserial(n,problem_size_multiplier)/(p*Tparallelb(n,problem_size_multiplier,p,Toverhead)));
+			printf("|%8.6f",efficiencyB(n,p,n*n*n));
 		}
 		printf("|\n");
-		Toverhead*=Toverhead*Toverhead;
 	}
 
 	//base on the table
-	printHorizontalSeparator(max_n_power);
+	printHorizontalSeparator(nMin,nMax);
+
+	//spaces between tables
+	printf("\n\n");
 
 	return 0;
 }
