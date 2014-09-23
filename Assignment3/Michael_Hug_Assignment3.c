@@ -181,7 +181,7 @@ int main()
   Pth_setup();
   fin = clock();
   unsigned long long time = fin-start;
-  printf("book's implementation :  %llu\n",time);
+  printf("book's implementation :  \t%llu\n",time);
 
   //printY();
 
@@ -191,11 +191,10 @@ int main()
   //printf("\n");
   
   start = clock();
-  Pth_setup();
+  michael_Pth_setup();
   fin = clock();
   time = fin-start;
-  printf("Michael's implementation : %llu\n",time);
-  michael_Pth_setup();
+  printf("Michael's implementation : \t%llu\n",time);
 
   //printY();
 
