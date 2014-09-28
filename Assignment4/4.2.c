@@ -1,4 +1,5 @@
 #include <time.h>
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -86,11 +87,10 @@ int main(int argc, char *argv[])
 		printf("Must supply an integer thread count between 1 and your system's max inclusivly\n");
 		return 2;
 	}
-	number_of_tosses_per_thread = atoi(argv[2]);
-	//billion is too much for cloudland, I tryed it and killed the program after 24 hours. Will recompile for stampede
-	if(1 > number_of_tosses_per_thread || number_of_tosses_per_thread>1000000000)
+	number_of_tosses_per_thread = atoll(argv[2]);
+	if(1 > number_of_tosses_per_thread || number_of_tosses_per_thread>pow(10,52))
 	{
-		printf("Supply a toss_per_thread between 1 and a billion inclusivly\n");
+		printf("Supply a toss_per_thread between 1 and a Sexdecillion inclusivly\n");
 		return 3;
 	}
 	if(0!=pthread_mutex_init(&mut, NULL))
@@ -130,9 +130,10 @@ int main(int argc, char *argv[])
 	}
 	free(threads); //void return
 	//printf("%llu\n",number_in_circle);
-	//printf("%llu\n",thread_count*number_of_tosses_per_thread);
+	printf("Total tosses : %llu\n",thread_count*number_of_tosses_per_thread);
 	number_of_tosses = thread_count*number_of_tosses_per_thread;
 	pi_estimate = 4*number_in_circle/number_of_tosses;
-	printf("An estimation of PI : %f (try using more (tosses*threads) for a more accurate estimation)\n",pi_estimate);
+	printf("Your estimation of PI : \t%.15f \n",pi_estimate);
+	printf("math.h's macro for  PI: \t%.15f\n", M_PI);
 	return 0;
 }
