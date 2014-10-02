@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/Arch Linux) (preloaded format=pdflatex 2014.9.1)  1 OCT 2014 13:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/Arch Linux) (preloaded format=pdflatex 2014.9.1)  1 OCT 2014 17:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -188,104 +188,40 @@ Missing character: There is no € in font cmti10!
 Missing character: There is no â in font cmti10!
 Missing character: There is no € in font cmti10!
 Missing character: There is no ™ in font cmti10!
-[1]
-Overfull \hbox (1.00336pt too wide) in paragraph at lines 165--166
-[][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (1.00336pt too wide) in paragraph at lines 170--171
-[][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (19.00354pt too wide) in paragraph at lines 173--174
-[][][][][][][][][][][][][][][][][][][] 
- []
-
-[2]
-Overfull \hbox (67.00403pt too wide) in paragraph at lines 204--205
+[1] [2]
+Overfull \hbox (16.00366pt too wide) in paragraph at lines 204--205
 [][][][][][][][][][][][][][][][][][][][][] 
  []
 
 [3]
-Overfull \hbox (229.00568pt too wide) in paragraph at lines 231--232
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (67.00403pt too wide) in paragraph at lines 237--238
+Overfull \hbox (4.00354pt too wide) in paragraph at lines 231--232
 [][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-
-Overfull \hbox (7.00342pt too wide) in paragraph at lines 241--242
-[][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (313.00653pt too wide) in paragraph at lines 243--244
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (181.00519pt too wide) in paragraph at lines 247--248
-[][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (229.00568pt too wide) in paragraph at lines 249--250
-[][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (25.0036pt too wide) in paragraph at lines 257--258
-[][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (85.00421pt too wide) in paragraph at lines 265--266
-[][][][][][][][][][][][][][][][][][][][][][] 
- []
-
 [4]
-Overfull \hbox (13.00348pt too wide) in paragraph at lines 268--269
-[][][][][][][][][][][][][][][] 
- []
-
 LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 288.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 292.
 
-Overfull \hbox (157.00494pt too wide) in paragraph at lines 289--290
+Overfull \hbox (106.00458pt too wide) in paragraph at lines 293--294
 [][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (79.00415pt too wide) in paragraph at lines 290--291
+Overfull \hbox (28.00378pt too wide) in paragraph at lines 294--295
 [][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (19.00354pt too wide) in paragraph at lines 291--292
-[][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (61.00397pt too wide) in paragraph at lines 292--293
+Overfull \hbox (10.0036pt too wide) in paragraph at lines 296--297
 [][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (19.00354pt too wide) in paragraph at lines 293--294
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 [5] [6] [7] (./Michael_Hug_Assignment4.aux) ) 
 Here is how much of TeX's memory you used:
- 2335 strings out of 493108
- 30994 string characters out of 6140726
- 134898 words of memory out of 5000000
- 5836 multiletter control sequences out of 15000+600000
+ 2337 strings out of 493108
+ 31012 string characters out of 6140726
+ 133898 words of memory out of 5000000
+ 5838 multiletter control sequences out of 15000+600000
  5047 words of font info for 19 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  27i,5n,49p,219b,1434s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -295,7 +231,7 @@ ts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
 b></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/font
 s/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Michael_Hug_Assignment4.pdf (8 pages, 106727 bytes).
+Output written on Michael_Hug_Assignment4.pdf (8 pages, 106916 bytes).
 PDF statistics:
  55 PDF objects out of 1000 (max. 8388607)
  38 compressed objects within 1 object stream

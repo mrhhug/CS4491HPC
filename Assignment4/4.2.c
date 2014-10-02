@@ -34,8 +34,8 @@ int get_max_threads()
 			max = atoi(str);
 		}
 	}
-	ret = fclose(fp);
-	if (0!=ret)
+	int retu = fclose(fp);
+	if (0!=retu)
 	{
 		printf("file close error\n");
 	}
