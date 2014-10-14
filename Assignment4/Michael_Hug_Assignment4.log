@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/Arch Linux) (preloaded format=pdflatex 2014.9.1)  1 OCT 2014 17:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/Arch Linux) (preloaded format=pdflatex 2014.9.1)  1 OCT 2014 20:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Michael_Hug_Assignment4.tex
+**./Michael_Hug_Assignment4.tex
 (./Michael_Hug_Assignment4.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 79 languages loaded.
@@ -189,52 +189,77 @@ Missing character: There is no â in font cmti10!
 Missing character: There is no € in font cmti10!
 Missing character: There is no ™ in font cmti10!
 [1] [2]
-Overfull \hbox (16.00366pt too wide) in paragraph at lines 204--205
+Overfull \hbox (16.00366pt too wide) in paragraph at lines 186--187
 [][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[3]
-Overfull \hbox (4.00354pt too wide) in paragraph at lines 231--232
+
+Overfull \hbox (4.00354pt too wide) in paragraph at lines 213--214
 [][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[3]
+Overfull \hbox (94.00446pt too wide) in paragraph at lines 238--239
+[][][][][][][][][][][] 
  []
 
 [4]
 LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 292.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 275.
 
-Overfull \hbox (106.00458pt too wide) in paragraph at lines 293--294
+Overfull \hbox (106.00458pt too wide) in paragraph at lines 276--277
 [][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (28.00378pt too wide) in paragraph at lines 294--295
+Overfull \hbox (28.00378pt too wide) in paragraph at lines 277--278
 [][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (10.0036pt too wide) in paragraph at lines 296--297
+Overfull \hbox (10.0036pt too wide) in paragraph at lines 279--280
 [][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[5] [6] [7] (./Michael_Hug_Assignment4.aux) ) 
+[5]
+Overfull \hbox (4.00354pt too wide) in paragraph at lines 354--355
+[][][][][][][][][][][][][][][][][] 
+ []
+
+[6] [7]
+Overfull \hbox (88.0044pt too wide) in paragraph at lines 417--418
+[][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (16.00366pt too wide) in paragraph at lines 424--425
+[][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (40.0039pt too wide) in paragraph at lines 447--448
+[][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[8] (./Michael_Hug_Assignment4.aux) ) 
 Here is how much of TeX's memory you used:
- 2337 strings out of 493108
- 31012 string characters out of 6140726
- 133898 words of memory out of 5000000
- 5838 multiletter control sequences out of 15000+600000
+ 2359 strings out of 493108
+ 31318 string characters out of 6140726
+ 132898 words of memory out of 5000000
+ 5860 multiletter control sequences out of 15000+600000
  5047 words of font info for 19 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 27i,5n,49p,219b,1434s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
-b></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/font
-s/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Michael_Hug_Assignment4.pdf (8 pages, 106916 bytes).
+ 27i,5n,49p,221b,1436s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+mi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/
+share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmti10.pfb>
+Output written on Michael_Hug_Assignment4.pdf (9 pages, 111372 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
- 38 compressed objects within 1 object stream
+ 58 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

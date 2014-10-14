@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 		printf("Supply a toss_per_thread between 1 and a Sexdecillion inclusivly\n");
 		return 4;
 	}
+	number_of_tosses_per_thread = number_of_tosses_per_thread/thread_count;
 	if(0!=pthread_mutex_init(&mut, NULL))
 	{
 		printf("mutex creation fail\n");
