@@ -165,7 +165,7 @@ void merge (float* data, int lower, int upper, int mid)
   else
   {
 			  int kk = lower;
-			  for ( ; kk<upper;kk++)
+			  for ( ; kk<=upper;kk++)
 			  {
 				  printf("%1.0f ",data[kk]);
 			  }
@@ -181,9 +181,9 @@ void merge (float* data, int lower, int upper, int mid)
 
     //go through and read each value once
     int i;
-    for(i=lower;i<upper;i++)
+    for(i=lower;i<=upper;i++)
     {
-      if(i<=mid) //we are on left array
+      if(i<=mid) //we are on x_left array
       {
 	      if(data[i]<data[x])
 		leftLeftArrayCount++;
@@ -208,7 +208,8 @@ void merge (float* data, int lower, int upper, int mid)
     int localCount = lower;
     for(i=0; i<leftLeftArrayCount;i++,localCount++)
 	    ll[i] = data[localCount];
-    data[localCount++]=data[x]; // account for mid
+    //data[localCount++]=data[x]; // account for mid
+    localCount++; // account for mid
     for(i=0; i<rightLeftArrayCount;i++,localCount++)
 	    rl[i] = data[localCount];
     for(i=0; i<leftRightArrayCount;i++,localCount++)
@@ -216,10 +217,10 @@ void merge (float* data, int lower, int upper, int mid)
     for(i=0; i<rightRightArrayCount;i++,localCount++)
 	    rr[i] = data[localCount];
 
+    data[upper-rightLeftArrayCount-rightRightArrayCount]=data[x];
     printf("\n mid : %1.0f\n",data[x]);
-    data[leftLeftArrayCount+rightLeftArrayCount+lower]=999999;//data[x];
     submerge left_merge_data = {data, ll,lr, lower,leftLeftArrayCount,leftRightArrayCount};
-    submerge right_merge_data = {data, rl,rr, x+3,rightLeftArrayCount,rightRightArrayCount};
+    submerge right_merge_data = {data, rl,rr, upper-rightLeftArrayCount-rightRightArrayCount+1,rightLeftArrayCount,rightRightArrayCount};
 
     pthread_t mergeThread;
     int result = pthread_create (&mergeThread, NULL, parallelMerge,(void*)(&right_merge_data));
@@ -230,8 +231,9 @@ void merge (float* data, int lower, int upper, int mid)
     result = pthread_join (mergeThread, NULL);
     if (result != 0)
 	err_sys ("pthread join error");
+
 kk = lower;
-			  for ( ; kk<upper;kk++)
+			  for ( ; kk<=upper;kk++)
 			  {
 				  printf("%1.0f ",data[kk]);
 			  }
