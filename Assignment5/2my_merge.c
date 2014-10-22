@@ -21,33 +21,22 @@ typedef struct
 
 typedef struct
 {
-	float* temp;
 	float* data;
+	float* temp;
 	int leftCursor;
 	int leftLength;
 	int rightCursor;
 	int rightLength;
-	int dataWriteCursor;
+	int dataCursor;
 } submerge;
 
 int main (int argc, char* argv[])
 {
-	long long array_size = 1000000;
-
-	/* START debug override */
-	char* debug=getenv("DEBUG");
-	if(debug!=NULL && debug[0]=='1')
-	{
-		array_size = 16;
-		
-	}
-	/* END debug override */
-
+	long long array_size = 20;
 	float* data = get_data (array_size);
 	pthread_t array_thread;
 	subarray entire_array = {data, 0, array_size - 1};
-	int result;
-	result = pthread_create (&array_thread, NULL, thread_merge_sort,
+	int result = pthread_create (&array_thread, NULL, thread_merge_sort,
 			(void*)(&entire_array));
 	if (result != 0)
 		err_sys ("pthread create error");
@@ -58,7 +47,7 @@ int main (int argc, char* argv[])
 		printf ("array is sorted\n");
 	else
 		printf ("array is not sorted\n");
-	//free(data);  //This was added. 
+	free(data);  //This was added. 
 	return 0;
 }
 
@@ -142,52 +131,41 @@ void serialMerge(float* data, int lower, int upper, int mid)
 void* parallelMerge (void* args)
 {
 	submerge* params = (submerge*)args;
+	int leftIndex =0;
+	int rightIndex =0;
 
 	/* START debug printing */
 	char* debug=getenv("DEBUG");
 	if(debug!=NULL && debug[0]=='1')
 	{
 		int i;
-		printf("\nData write cursor : %d\n ",params->dataWriteCursor);
-		printf("left side begin:%i end:%i  elements : ",params->leftCursor,params->leftLength+params->leftCursor);
-		for(i=params->leftCursor;i<params->leftLength+params->leftCursor;i++)
-			printf("%1.0f ",params->temp[i]);
-		printf("\n ");
-		printf("right side begin:%i end:%i  elements : ",params->rightCursor,params->rightLength+params->rightCursor);
-		for(i=params->rightCursor;i<params->rightLength+params->rightCursor;i++)
-			printf("%1.0f ",params->temp[i]);
+		printf("left array : ");
+		for(i=0;i<params->leftArraycount;i++)
+			printf("%1.0f ",params->leftArray[i]);
+		printf("\n");
+		printf("right array : ");
+		for(i=0;i<params->rightArraycount;i++)
+			printf("%1.0f ",params->rightArray[i]);
+		printf("\n");
 	}
 	/* END debug printing */
-	int i;
 
 	//the decision loop for when there are items left in both arrays
-	while(params->leftLength > 0 && params->rightLength > 0)
+	while(params->leftArraycount>leftIndex && params->rightArraycount>rightIndex)
 	{
-		if(params->temp[params->leftCursor] < params->temp[params->rightCursor])
-		{
-			params->data[params->dataWriteCursor++]=params->temp[params->leftCursor++];
-			params->leftLength--;
-		}
+		if(params->leftArray[leftIndex] < params->rightArray[rightIndex])
+			params->data[params->startingPointonDataArray++]=params->leftArray[leftIndex++];
 		else
-		{
-			params->data[params->dataWriteCursor++]=params->temp[params->rightCursor++];
-			params->rightLength--;
-		}
+			params->data[params->startingPointonDataArray++]=params->rightArray[rightIndex++];
 	}
 
 	//figure out who still has items left in their array, then grab all
-	if(params->leftLength == 0)
-		while(params->rightLength > 0 )
-		{
-			params->data[params->dataWriteCursor++]=params->temp[params->rightCursor++];
-			params->rightLength--;
-		}
+	if(params->leftArraycount==leftIndex)
+		while(params->rightArraycount>rightIndex)
+			params->data[params->startingPointonDataArray++]=params->rightArray[rightIndex++];
 	else
-		while(params->leftLength > 0)
-		{
-			params->data[params->dataWriteCursor++]=params->temp[params->leftCursor++];
-			params->leftLength--;
-		}
+		while(params->leftArraycount>leftIndex)
+			params->data[params->startingPointonDataArray++]=params->leftArray[leftIndex++];    
 	return NULL;
 }
 void merge (float* data, int lower, int upper, int mid)
@@ -201,73 +179,76 @@ void merge (float* data, int lower, int upper, int mid)
 	{
 		int x = (lower+mid)/2; // this index will be the mid of our 2 merges, we need to never consider this index again
 		int leftLeftArrayCount=0;
-		int leftRightArrayCount=0; // first one here will be our mid
-		int rightLeftArrayCount=0; 
+		int leftRightArrayCount=0; 
+		int rightLeftArrayCount=0; // first one here will be our mid
 		int rightRightArrayCount=0;
-		//temp array
-		float* temp = malloc(sizeof(float)* (upper-lower)-1);
-		int tempCount=0;
 
 		/* START debug printing */
 		char* debug=getenv("DEBUG");
 		if(debug!=NULL && debug[0]=='1')
 		{
 			printf("Status before  merge : \n");
-			int kk = 0;
-			for ( ; kk<16;kk++)
+			int kk = lower;
+			for ( ; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
 			printf("\nlow is %d\n",lower);
 			printf("Middle is %d\n",mid);
 			printf("upper is %d\n",upper);
-			printf("mid num: %1.0f",data[x]);
+			printf("mid num: %1.0f\n",data[x]);
 		}
 		/* END debug printing */
 
-		//read each source to copy to temp array, while deciding which thread gets what element
+		float* temp = malloc(sizeof(float)*(upper-lower));
+		
+		//go through and read each value once
 		int i;
 		int j=0;
 		for(i=lower;i<=upper;i++)
 		{
-			if(x!=i)
+			temp[j++] = data[i];
+			if(i<=mid) //we are on x_left array
 			{
-				temp[j++]=data[i];
-				if(i <= mid)   ///// change this later to optomize, ignore the mid
-				{
-					if(data[i]<data[x])
-						leftLeftArrayCount++;
-					else
-						leftRightArrayCount++;
-				}
+				if(data[i]<data[x])
+					leftLeftArrayCount++;
 				else
-				{
-					if(data[i]<data[x])
-						rightLeftArrayCount++;
-					else
-						rightRightArrayCount++;
-				}
+					rightLeftArrayCount++;
+			}
+			else // right
+			{
+				if(data[i]<data[x])
+					leftRightArrayCount++;
+				else
+					rightRightArrayCount++;
 			}
 		}
 
+		//allocate temp arrays
+		float* ll = malloc(sizeof(float)*leftLeftArrayCount);
+		float* lr = malloc(sizeof(float)*leftRightArrayCount); 
+		float* rl = malloc(sizeof(float)*--rightLeftArrayCount); //mind the mid
+		float* rr = malloc(sizeof(float)*rightRightArrayCount);
+
+		//write temps
+		/*int localCount = lower;
+		for(i=0; i<leftLeftArrayCount;i++,localCount++)
+			ll[i] = data[localCount];
+		localCount++; // account for mid
+		for(i=0; i<rightLeftArrayCount;i++,localCount++)
+			rl[i] = data[localCount];
+		for(i=0; i<leftRightArrayCount;i++,localCount++)
+			lr[i] = data[localCount];
+		for(i=0; i<rightRightArrayCount;i++,localCount++)
+			rr[i] = data[localCount];
+			*/
+
 		//write to mid
-	//	data[leftLeftArrayCount+leftRightArrayCount+lower]=data[x];
+		data[upper-rightLeftArrayCount-rightRightArrayCount]=data[x];
 
 		//create structs
-		printf("\nright right count%d\n",rightRightArrayCount);
-		printf("right left count%d\n",rightLeftArrayCount);
-		printf("left left count%d\n",leftLeftArrayCount);
-		printf("left right count%d\n",leftRightArrayCount);
-		if(leftRightArrayCount==0 || leftLeftArrayCount==0 || rightLeftArrayCount==0 || rightRightArrayCount==0 )
-		{
-			serialMerge(data,lower,upper,mid);
-			return;
-		}
-		//write to mid
-		data[leftLeftArrayCount+rightLeftArrayCount+1]=data[x];
-
-		submerge left_merge_data = {temp, data, 0, leftLeftArrayCount, mid, rightLeftArrayCount, 0};
-		submerge right_merge_data = {temp, data, leftLeftArrayCount, leftRightArrayCount , upper-rightRightArrayCount,rightRightArrayCount, leftLeftArrayCount+rightLeftArrayCount+1};//skip over new mid
+		submerge left_merge_data = {data, temp, 0, leftLeftArrayCount,leftLeftArrayCount+leftRightArrayCount+2,rightLeftArrayCount, lower};
+		submerge right_merge_data = {data, temp,leftLeftArrayCount+1, leftRightArrayCount,leftLeftArrayCount+leftRightArrayCount+rightLeftArrayCount+1,upper-rightLeftArrayCount-rightRightArrayCount+1};
 
 		//create one thread. This thread will do it's own half
 		pthread_t mergeThread;
@@ -284,26 +265,19 @@ void merge (float* data, int lower, int upper, int mid)
 		/* START debug printing */
 		if(debug!=NULL && debug[0]=='1')
 		{
-			printf("\ntemp array : ");
-			for(i=0;i<=upper-lower;i++)
-			{
-
-				printf("%1.0f ",temp[i]);
-			}
-			printf("\nStatus after merge : \n");
-			int kk =0 ;
-			for ( ; kk<16;kk++)
+			printf("Status after merge : \n");
+			int kk = lower;
+			for ( ; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
 			printf("\n\n\n");
 		}
 		/* END debug printing */
-		/*free(ll);
+		free(ll);
 		free(lr);
 		free(rl);
-		free(rr);*/
-		//free(temp);
+		free(rr);
 	}
 }
 
@@ -317,7 +291,7 @@ float* get_data (int data_count)
 	/* START debug override */
 	char* debug=getenv("DEBUG");
 	if(debug!=NULL && debug[0]=='1')
-		srand(time(NULL));
+		srand(0);
 	/* END debug override */
 
 	int i;

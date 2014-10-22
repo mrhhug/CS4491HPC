@@ -22,7 +22,7 @@ typedef struct
 
 int main (int argc, char* argv[])
 {
-  long long array_size = 10000000;
+  long long array_size = 1000000;
   float* data = get_data (array_size);
   pthread_t array_thread;
   subarray entire_array = {data, 0, array_size - 1};
