@@ -212,8 +212,13 @@ void merge (float* data, int lower, int upper, int mid)
 		if(debug!=NULL && debug[0]=='1')
 		{
 			printf("Status before  merge : \n");
-			int kk = lower;
-			for ( ; kk<=upper;kk++)
+			int kk = 0;
+			for ( ; kk<=16;kk++)
+			{
+				printf("%1.0f ",data[kk]);
+			}
+			printf("\n");
+			for ( kk=lower; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
@@ -239,9 +244,11 @@ void merge (float* data, int lower, int upper, int mid)
 			temp[j++]=data[i++];
 			LRcount++;
 		}
-		while(data[i] < data[x])
+		while(data[i] < data[x] && i <=upper)
 		{
 			temp[j++]=data[i++];
+			if(j==15)
+				printf("ddd");
 			RLcount++;
 		}
 		while(i<=upper)
@@ -252,21 +259,16 @@ void merge (float* data, int lower, int upper, int mid)
 
 		//write to mid
 	//	data[LLcount+LRcount+lower]=data[x];
-
-		//create structs
-		printf("\nleft left count%d\n",LLcount);
-		printf("left right count%d\n",LRcount);
-		printf("right left count%d\n",RLcount);
-		printf("right right count%d\n",RRcount);
-		/*
-		if(LRcount==0 || LLcount==0 || RLcount==0 || RRcount==0 )
+	//
+		/* START debug printing */
+		if(debug!=NULL && debug[0]=='1')
 		{
-			serialMerge(data,lower,upper,mid);
-			return;
+			printf("\nleft left count%d\n",LLcount);
+			printf("left right count%d\n",LRcount);
+			printf("right left count%d\n",RLcount);
+			printf("right right count%d\n",RRcount);
 		}
-		*/
-		//write to mid
-		data[LLcount+RLcount+1]=data[x];
+		/* END debug printing */
 
 		submerge left_merge_data = {temp, data, 0, LLcount, LLcount+LRcount, RLcount, lower};
 		submerge right_merge_data = {temp, data, LLcount, LRcount , LLcount+LRcount+RLcount, RRcount,lower+LLcount+RLcount};//skip over new mid
@@ -293,8 +295,13 @@ void merge (float* data, int lower, int upper, int mid)
 				printf("%1.0f ",temp[i]);
 			}
 			printf("\nStatus after merge : \n");
-			int kk =lower ;
-			for ( ; kk<=upper;kk++)
+			int kk =0 ;
+			for ( ; kk<=16;kk++)
+			{
+				printf("%1.0f ",data[kk]);
+			}
+			printf("\n");
+			for ( kk=lower; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
@@ -319,7 +326,11 @@ float* get_data (int data_count)
 	/* START debug override */
 	char* debug=getenv("DEBUG");
 	if(debug!=NULL && debug[0]=='1')
-		srand(3);
+	{
+		int var = time(NULL)%100;
+		printf("timeer = %i",var);
+		srand(var);
+	}
 	/* END debug override */
 
 	int i;
