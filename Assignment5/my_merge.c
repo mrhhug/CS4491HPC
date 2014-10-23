@@ -149,16 +149,15 @@ void* parallelMerge (void* args)
 	{
 		int i;
 		printf("\nData write cursor : %d\n ",params->dataWriteCursor);
-		printf("left side begin:%i end:%i  elements : ",params->leftCursor,params->leftLength+params->leftCursor);
+		printf("left side begin:%i end:%i  elements : ",params->leftCursor,params->leftLength);
 		for(i=params->leftCursor;i<params->leftLength+params->leftCursor;i++)
 			printf("%1.0f ",params->temp[i]);
 		printf("\n ");
-		printf("right side begin:%i end:%i  elements : ",params->rightCursor,params->rightLength+params->rightCursor);
+		printf("right side begin:%i end:%i  elements : ",params->rightCursor,params->rightLength);
 		for(i=params->rightCursor;i<params->rightLength+params->rightCursor;i++)
 			printf("%1.0f ",params->temp[i]);
 	}
 	/* END debug printing */
-	int i;
 
 	//the decision loop for when there are items left in both arrays
 	while(params->leftLength > 0 && params->rightLength > 0)
@@ -200,21 +199,21 @@ void merge (float* data, int lower, int upper, int mid)
 	else
 	{
 		int x = (lower+mid)/2; // this index will be the mid of our 2 merges, we need to never consider this index again
-		int leftLeftArrayCount=0;
-		int leftRightArrayCount=0; // first one here will be our mid
-		int rightLeftArrayCount=0; 
-		int rightRightArrayCount=0;
+		int LLcount=0;
+		int LRcount=0; // first one here will be our mid
+		int RLcount=0; 
+		int RRcount=0;
+		
 		//temp array
-		float* temp = malloc(sizeof(float)* (upper-lower)-1);
-		int tempCount=0;
+		float* temp = malloc(sizeof(float)* (upper-lower)+1);
 
 		/* START debug printing */
 		char* debug=getenv("DEBUG");
 		if(debug!=NULL && debug[0]=='1')
 		{
 			printf("Status before  merge : \n");
-			int kk = 0;
-			for ( ; kk<16;kk++)
+			int kk = lower;
+			for ( ; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
@@ -226,48 +225,51 @@ void merge (float* data, int lower, int upper, int mid)
 		/* END debug printing */
 
 		//read each source to copy to temp array, while deciding which thread gets what element
-		int i;
+		int i = lower;
 		int j=0;
-		for(i=lower;i<=upper;i++)
+
+		while(data[i] < data[x])
 		{
-			if(x!=i)
-			{
-				temp[j++]=data[i];
-				if(i <= mid)   ///// change this later to optomize, ignore the mid
-				{
-					if(data[i]<data[x])
-						leftLeftArrayCount++;
-					else
-						leftRightArrayCount++;
-				}
-				else
-				{
-					if(data[i]<data[x])
-						rightLeftArrayCount++;
-					else
-						rightRightArrayCount++;
-				}
-			}
+			temp[j++]=data[i++];
+			LLcount++;
+		}
+		//i++; //x
+		while(i <= mid)
+		{
+			temp[j++]=data[i++];
+			LRcount++;
+		}
+		while(data[i] < data[x])
+		{
+			temp[j++]=data[i++];
+			RLcount++;
+		}
+		while(i<=upper)
+		{
+			temp[j++]=data[i++];
+			RRcount++;
 		}
 
 		//write to mid
-	//	data[leftLeftArrayCount+leftRightArrayCount+lower]=data[x];
+	//	data[LLcount+LRcount+lower]=data[x];
 
 		//create structs
-		printf("\nright right count%d\n",rightRightArrayCount);
-		printf("right left count%d\n",rightLeftArrayCount);
-		printf("left left count%d\n",leftLeftArrayCount);
-		printf("left right count%d\n",leftRightArrayCount);
-		if(leftRightArrayCount==0 || leftLeftArrayCount==0 || rightLeftArrayCount==0 || rightRightArrayCount==0 )
+		printf("\nleft left count%d\n",LLcount);
+		printf("left right count%d\n",LRcount);
+		printf("right left count%d\n",RLcount);
+		printf("right right count%d\n",RRcount);
+		/*
+		if(LRcount==0 || LLcount==0 || RLcount==0 || RRcount==0 )
 		{
 			serialMerge(data,lower,upper,mid);
 			return;
 		}
+		*/
 		//write to mid
-		data[leftLeftArrayCount+rightLeftArrayCount+1]=data[x];
+		data[LLcount+RLcount+1]=data[x];
 
-		submerge left_merge_data = {temp, data, 0, leftLeftArrayCount, mid, rightLeftArrayCount, 0};
-		submerge right_merge_data = {temp, data, leftLeftArrayCount, leftRightArrayCount , upper-rightRightArrayCount,rightRightArrayCount, leftLeftArrayCount+rightLeftArrayCount+1};//skip over new mid
+		submerge left_merge_data = {temp, data, 0, LLcount, LLcount+LRcount, RLcount, lower};
+		submerge right_merge_data = {temp, data, LLcount, LRcount , LLcount+LRcount+RLcount, RRcount,lower+LLcount+RLcount};//skip over new mid
 
 		//create one thread. This thread will do it's own half
 		pthread_t mergeThread;
@@ -285,14 +287,14 @@ void merge (float* data, int lower, int upper, int mid)
 		if(debug!=NULL && debug[0]=='1')
 		{
 			printf("\ntemp array : ");
-			for(i=0;i<=upper-lower;i++)
+			for(i=0;i<upper-lower+1;i++)
 			{
 
 				printf("%1.0f ",temp[i]);
 			}
 			printf("\nStatus after merge : \n");
-			int kk =0 ;
-			for ( ; kk<16;kk++)
+			int kk =lower ;
+			for ( ; kk<=upper;kk++)
 			{
 				printf("%1.0f ",data[kk]);
 			}
@@ -317,7 +319,7 @@ float* get_data (int data_count)
 	/* START debug override */
 	char* debug=getenv("DEBUG");
 	if(debug!=NULL && debug[0]=='1')
-		srand(time(NULL));
+		srand(3);
 	/* END debug override */
 
 	int i;
