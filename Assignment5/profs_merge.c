@@ -23,6 +23,15 @@ typedef struct
 int main (int argc, char* argv[])
 {
   long long array_size = 1000000;
+
+  /* START ARRAYSIZE override */
+  char* arraysize=getenv("ARRAYSIZE");
+  if(arraysize!=NULL)
+  {
+    array_size=atoll(arraysize);
+  }
+  /* END ARRAYSIZE override */
+
   float* data = get_data (array_size);
   pthread_t array_thread;
   subarray entire_array = {data, 0, array_size - 1};
@@ -34,7 +43,15 @@ int main (int argc, char* argv[])
   if (result != 0)
     err_sys ("pthread join error");
   if (is_sorted (data, array_size))
-    printf ("array is sorted\n");
+  {
+    /* START sucess print override */
+	char* debug=getenv("SUPPRESSSUCCES");
+	if(debug!=NULL && debug[0]=='1')
+		;
+	else
+		printf ("array is sorted\n");
+	/* END sucess print override */
+  }
   else
     printf ("array is not sorted\n");
   return 0;

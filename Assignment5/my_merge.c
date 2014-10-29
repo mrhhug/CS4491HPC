@@ -2,13 +2,18 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-float* get_data (int data_count);
-
-void err_sys (const char* message);
 
 void* thread_merge_sort (void* args);
 
+void err_sys (const char* message);
+
+void serialMerge(float* data, int lower, int upper, int mid);
+
+void* parallelMerge (void* args);
+
 void merge (float* data, int lower, int upper, int mid);
+
+float* get_data (int data_count);
 
 int is_sorted (float* data, int size);
 
@@ -34,12 +39,19 @@ int main (int argc, char* argv[])
 {
 	long long array_size = 1000000;
 
+	/* START ARRAYSIZE override */
+	char* arraysize=getenv("ARRAYSIZE");
+	if(arraysize!=NULL)
+	{
+		array_size=atoll(arraysize);
+	}
+	/* END ARRAYSIZE override */
+
 	/* START debug override */
 	char* debug=getenv("DEBUG");
 	if(debug!=NULL && debug[0]=='1')
 	{
 		array_size = 16;
-		
 	}
 	/* END debug override */
 
@@ -55,10 +67,17 @@ int main (int argc, char* argv[])
 	if (result != 0)
 		err_sys ("pthread join error");
 	if (is_sorted (data, array_size))
-		printf ("array is sorted\n");
+	{
+		/* START sucess print override */
+		char* debug=getenv("SUPPRESSSUCCES");
+		if(debug!=NULL && debug[0]=='1')
+			;
+		else
+			printf ("array is sorted\n");
+		/* END sucess print override */
+	}
 	else
 		printf ("array is not sorted\n");
-	//free(data);  //This was added. 
 	return 0;
 }
 
@@ -101,7 +120,6 @@ void err_sys (const char* message)
 	exit (0);
 }
 
-
 void serialMerge(float* data, int lower, int upper, int mid)
 {
 	float temp[upper - lower + 1];
@@ -138,7 +156,6 @@ void serialMerge(float* data, int lower, int upper, int mid)
 		data[lower + k] = temp[k];
 }
 
-
 void* parallelMerge (void* args)
 {
 	submerge* params = (submerge*)args;
@@ -174,7 +191,7 @@ void* parallelMerge (void* args)
 		}
 	}
 
-	//figure out who still has items left in their array, then grab all
+	//figure out who still has items left in their array, then grab remaining
 	if(params->leftLength == 0)
 		while(params->rightLength > 0 )
 		{
@@ -193,19 +210,27 @@ void merge (float* data, int lower, int upper, int mid)
 {	
 	//we had to have some type of threshold
 	//we don't want to spawn threads to
-	//merge sublists of 0 or 1. I took it up to 5
-	if(upper-lower<=4)
+	//merge sublists of 0 or 1.
+	int thres = 2024;
+
+	/* START THRES override */
+	char* enviThre=getenv("THRES");
+	if(enviThre!=NULL)
+	{
+		thres=atoi(enviThre);
+	}
+	/* END THRES override */
+
+	if(upper-lower<=thres)
 		serialMerge(data,lower,upper,mid);
 	else
 	{
-		int x = (lower+mid)/2; // this index will be the mid of our 2 merges, we need to never consider this index again
-		int LLcount=0;
-		int LRcount=0; // first one here will be our mid
-		int RLcount=0; 
-		int RRcount=0;
-		
+		int x = (lower+mid)/2; // this index will be the mid of our 2 merges
+		int LLcount=x-lower;
+		int LRcount=mid-x; /// could be changed +- 1
+				
 		//temp array
-		float* temp = malloc(sizeof(float)* (upper-lower)+1);
+		float* temp = malloc(sizeof(float)* (upper-lower));
 
 		/* START debug printing */
 		char* debug=getenv("DEBUG");
@@ -229,37 +254,20 @@ void merge (float* data, int lower, int upper, int mid)
 		}
 		/* END debug printing */
 
-		//read each source to copy to temp array, while deciding which thread gets what element
-		int i = lower;
+		//copy and count
+		int i=lower;
 		int j=0;
+		for( ;j<LLcount;j++,i++)
+			temp[j]=data[i];
+		for(++i;j<LLcount+LRcount;i++,j++)
+			temp[j]=data[i];
+		for( ;data[i]<=data[x] && i<=upper;i++,j++)
+			temp[j]=data[i];
+		int RLcount=j-LRcount-LLcount; 
+		int RRcount=upper-mid-RLcount;	
+		for( ;i<=upper;i++)
+			temp[j++]=data[i];
 
-		while(data[i] < data[x])
-		{
-			temp[j++]=data[i++];
-			LLcount++;
-		}
-		//i++; //x
-		while(i <= mid)
-		{
-			temp[j++]=data[i++];
-			LRcount++;
-		}
-		while(data[i] < data[x] && i <=upper)
-		{
-			temp[j++]=data[i++];
-			if(j==15)
-				printf("ddd");
-			RLcount++;
-		}
-		while(i<=upper)
-		{
-			temp[j++]=data[i++];
-			RRcount++;
-		}
-
-		//write to mid
-	//	data[LLcount+LRcount+lower]=data[x];
-	//
 		/* START debug printing */
 		if(debug!=NULL && debug[0]=='1')
 		{
@@ -270,8 +278,9 @@ void merge (float* data, int lower, int upper, int mid)
 		}
 		/* END debug printing */
 
+		data[lower+LLcount+RLcount]=data[x];
 		submerge left_merge_data = {temp, data, 0, LLcount, LLcount+LRcount, RLcount, lower};
-		submerge right_merge_data = {temp, data, LLcount, LRcount , LLcount+LRcount+RLcount, RRcount,lower+LLcount+RLcount};//skip over new mid
+		submerge right_merge_data = {temp, data, LLcount, LRcount ,LLcount+LRcount+RLcount, RRcount,lower+LLcount+RLcount+1};//skip over new mid
 
 		//create one thread. This thread will do it's own half
 		pthread_t mergeThread;
@@ -289,7 +298,7 @@ void merge (float* data, int lower, int upper, int mid)
 		if(debug!=NULL && debug[0]=='1')
 		{
 			printf("\ntemp array : ");
-			for(i=0;i<upper-lower+1;i++)
+			for(i=0;i<upper-lower;i++)
 			{
 
 				printf("%1.0f ",temp[i]);
@@ -308,10 +317,6 @@ void merge (float* data, int lower, int upper, int mid)
 			printf("\n\n\n");
 		}
 		/* END debug printing */
-		/*free(ll);
-		free(lr);
-		free(rl);
-		free(rr);*/
 		//free(temp);
 	}
 }
@@ -329,7 +334,8 @@ float* get_data (int data_count)
 	{
 		int var = time(NULL)%100;
 		printf("timeer = %i",var);
-		srand(var);
+		srand(0);
+		//srand(time(NULL));
 	}
 	/* END debug override */
 
