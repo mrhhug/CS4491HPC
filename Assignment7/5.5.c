@@ -2,7 +2,7 @@
 #include<math.h>
 #include<stdlib.h>
 
-void prin(int n, float A[n][n])
+void prin(int n, float ** A)
 {
 	int j, i;
 	for(i=0; i<n; i++) 
@@ -19,21 +19,20 @@ int main()
 {
 	int i,j,k,n=50;
 	
-	float **array;
-	array = malloc(n * sizeof(float *));
-	if(array == NULL)
+	float **A;
+	A = malloc(n * sizeof(float *));
+	if(A == NULL)
 		printf("out of memory\n");
 	for(i = 0; i < n; i++)
 	{
-		array[i] = malloc(n * sizeof(float));
-		if(array[i] == NULL)
+		A[i] = malloc(n * sizeof(float));
+		if(A[i] == NULL)
 			printf("out of memory\n");
 	}	
 
 
 
 
-	float A[n][n];
 	for(i=0; i<n; i++)
 	{
 		for(j=0; j<n; j++)
@@ -41,7 +40,7 @@ int main()
 			A[i][j]=i+j+4;
 		}
 	}
-//	prin(n,a);
+	prin(n,A);
 //	printf("\n");
 	
 	float ratio;
@@ -71,8 +70,8 @@ int main()
 
 
 	for(i = 0; i < n; i++)
-		free(array[i]);
-	free(array);
+		free(A[i]);
+	free(A);
 
 	return(0);
 }
