@@ -17,7 +17,7 @@ void prin(int n, float ** A)
 }
 int main()
 {
-	int i,j,k,n=50;
+	int i,j,k,n=50000;
 	
 	float **A;
 	A = malloc(n * sizeof(float *));
