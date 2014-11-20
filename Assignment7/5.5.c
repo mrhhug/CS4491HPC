@@ -27,9 +27,14 @@ void err_sys (const char* message)
 }
 int main()
 {
+<<<<<<< HEAD
 	int i,j,k,n=2000;
 	//int i,j,k,n=5;
 	float ratio;
+=======
+	int i,j,k,n=50000;
+	
+>>>>>>> 143d25cafeb141a1b105b08f6d57f2687f35f998
 	float **A;
 	float *R;
 	R = malloc(n * sizeof(float *));
