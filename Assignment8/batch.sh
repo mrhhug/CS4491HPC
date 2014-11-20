@@ -3,9 +3,9 @@
 #SBATCH -J assn8       # Job name
 #SBATCH -o assn8.o%j   # Name of stdout output file(%j expands to jobId)
 #SBATCH -e assn8.o%j   # Name of stderr output file(%j expands to jobId)
-#SBATCH -p normal           # Submit to the 'normal' or 'development' queue
-#SBATCH -N 128                # Total number of nodes requested (16 cores/node)
-#SBATCH -n 2048               # Total number of mpi tasks requested
+#SBATCH -p development           # Submit to the 'normal' or 'development' queue
+#SBATCH -N 16                # Total number of nodes requested (16 cores/node)
+#SBATCH -n 256               # Total number of mpi tasks requested
 #SBATCH -t 01:00:00         # Run time (hh:mm:ss) - 1.5 hours
 
 #SBATCH -A TG-ASC140030 	# <-- Allocation name to charge job against!
@@ -28,4 +28,4 @@ do
 	done
 	echo ""
 done
-echo "_____________________________________________________________":q
+echo "_____________________________________________________________"
