@@ -1,0 +1,12 @@
+TACC: Starting up job 4535767
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Number in Circle :12567009
+Number of tosses :16000000
+My estimation of PI : 3.141752
+ 
+TACC: Shutdown complete. Exiting.
+
+real	0m4.505s
+user	0m0.614s
+sys	0m0.193s
