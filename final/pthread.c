@@ -22,13 +22,8 @@ int main (int argc, char* argv[])
 		err_sys ("invalid command line argument");
 	pthread_t threads[thread_count];
 	for (i=0; i<thread_count; i++)
-	{
-		if(pthread_create(&threads[i], NULL,Pth_mat_vect, (void *)rank++))
-		{
-			printf("error creating thread");
-			exit(1);
-		}
-	}
+		if(pthread_create(&threads[i], NULL,find_num_primes, (void *)rank++))
+			err_sys("error creating thread");
 	long long int num_primes = find_num_primes (num);
 	printf ("%lld primes <= %lld\n", num_primes, num);
 	return 0;
